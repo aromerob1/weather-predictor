@@ -3,7 +3,7 @@ import { getWeatherPredictionByDay, getWeatherPredictionsByNumberOfYears } from 
 
 export const getWeatherByDay = async (req: Request, res: Response): Promise<void> => {
   try {
-    // Obtener el día de los parámetros de la solicitud
+    // Get the day from the request parameters
     const day = parseInt(req.params.day, 10);
 
     if (isNaN(day) || day < 0) {
@@ -11,10 +11,9 @@ export const getWeatherByDay = async (req: Request, res: Response): Promise<void
       return;
     }
 
-    // Llamar al servicio para obtener la predicción
+    // Call the service to get the prediction
     const prediction = await getWeatherPredictionByDay(day);
 
-    // Responder con el resultado
     res.status(200).json(prediction);
   } catch (error) {
     console.error("Error fetching weather prediction:", error);
@@ -24,7 +23,7 @@ export const getWeatherByDay = async (req: Request, res: Response): Promise<void
 
 export const getWeatherForNumberOfYears = async (req: Request, res: Response): Promise<void> => {
     try {
-        // Obtener el número de años de los parámetros de la solicitud
+        // Get the years from the request parameters
         const years = parseInt(req.params.years, 10);
     
         if (isNaN(years) || years < 0) {
@@ -32,10 +31,9 @@ export const getWeatherForNumberOfYears = async (req: Request, res: Response): P
         return;
         }
     
-        // Llamar al servicio para obtener las predicciones
+        // Call the service to get the predictions
         const predictions = await getWeatherPredictionsByNumberOfYears(years);
     
-        // Responder con el resultado
         res.status(200).json(predictions);
     } catch (error) {
         console.error("Error fetching weather predictions:", error);

@@ -2,18 +2,17 @@ import sqlite3 from 'sqlite3';
 import { open, Database } from 'sqlite';
 import path from 'path';
 
-// Función asíncrona para inicializar y conectar la base de datos
+// Initializes the database
 const initializeDB = async (): Promise<Database<sqlite3.Database, sqlite3.Statement>> => {
-    // Ruta absoluta al archivo weather.db dentro de la carpeta database
+    // Path to the database file
     const dbPath = path.resolve(__dirname, 'weather.db');
   
-    // Abre la base de datos (la crea si no existe)
+    // Open the database or create it if it does not exist
     const db = await open({
       filename: dbPath,
       driver: sqlite3.Database
     });
   
-    // Crea la tabla weather_conditions si no existe
     await db.exec(`
       CREATE TABLE IF NOT EXISTS weather_conditions (
         day INTEGER PRIMARY KEY,
@@ -26,7 +25,7 @@ const initializeDB = async (): Promise<Database<sqlite3.Database, sqlite3.Statem
     return db;
   };
 
-// Exporta una instancia de la base de datos para ser usada en otros módulos
+// Export the function to get the database instance
 let dbInstance: Database<sqlite3.Database, sqlite3.Statement> | null = null;
 
 export const getDB = async (): Promise<Database<sqlite3.Database, sqlite3.Statement>> => {

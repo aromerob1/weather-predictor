@@ -2,7 +2,7 @@ import { getDB } from './index';
 import { WeatherConditions } from '../interfaces/weather.interface';
 import { Database } from 'sqlite';
 
-// Función para insertar una predicción si no existe
+// Inserts a weather condition if it does not exist
 export const insertWeatherConditionIfNotExists = async (condition: WeatherConditions): Promise<void> => {
   const db: Database = await getDB();
 
@@ -15,7 +15,7 @@ export const insertWeatherConditionIfNotExists = async (condition: WeatherCondit
   await stmt.finalize();
 };
 
-// Función para verificar si una predicción ya existe
+// Check if a weather condition already exists
 export const weatherConditionExists = async (day: number): Promise<boolean> => {
   const db: Database = await getDB();
 
@@ -26,7 +26,7 @@ export const weatherConditionExists = async (day: number): Promise<boolean> => {
   return !!row;
 };
 
-// Función para obtener una predicción por día
+// Gets a weather condition by day from the database
 export const getWeatherConditionByDay = async (day: number): Promise<WeatherConditions | null> => {
   const db: Database = await getDB();
 
