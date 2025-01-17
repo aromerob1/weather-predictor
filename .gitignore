@@ -1,3 +1,9 @@
 node_modules/
 dist/
+build/
+*.js
+*.js.map
+tsconfig.tsbuildinfo
 src/database/weather.db
+.env
+package-lock.json
