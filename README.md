@@ -45,7 +45,7 @@ Follow these steps to set up the project locally:
 
 ## Usage
 
-### 1. Weather Conditions for a Specific Year
+### 1. Weather Conditions for a Specific amount of Years
 This endpoint provides weather conditions for a given amount of years.
 
 #### Endpoint:
