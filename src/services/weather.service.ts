@@ -119,7 +119,6 @@ export const getWeatherPredictionByDay = async (day: number): Promise<WeatherCon
   //Check if the day already exists in the database
   const dbDay: WeatherConditions | null = await getWeatherConditionByDay(day);
   if (dbDay) {
-    console.log(`Day ${day} already exists in DB`);
     return { day, condition: dbDay.condition, perimeter: dbDay.perimeter };
   }
 
@@ -210,7 +209,6 @@ export const getWeatherPredictionsByNumberOfYears = async (
     }
 
     if (!(await weatherConditionExists(day))) {
-      console.log('Creating prediction for day:', day);
       // Prepare the weather condition object
       const weatherCondition: WeatherConditions = {
         day: day,
@@ -225,7 +223,6 @@ export const getWeatherPredictionsByNumberOfYears = async (
         console.error(`Error al insertar la predicción del día ${day}:`, error);
       }
     }
-    console.log(`Day ${day} already exists in DB`);
   }
   console.log('Min Determinant:', minDeterminant);
   console.log('Max Determinant:', maxDeterminant);
