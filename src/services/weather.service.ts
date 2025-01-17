@@ -1,7 +1,6 @@
 import { Position } from '../interfaces/position.interface';
 import { WeatherConditions, WeatherYearsPredictions } from '../interfaces/weather.interface';
 import { PLANETS } from '../config/planets';
-import { getDB } from '../database';
 import { insertWeatherConditionIfNotExists, getWeatherConditionByDay, weatherConditionExists } from '../database/weather.operations';
 
 
@@ -37,7 +36,7 @@ export const arePlanetsAligned = (position1: Position, position2: Position, posi
 };
 
 /**
- * Calculates the determinant/area of the triangle formed by the three planets.
+ * Calculates the determinant/doubled area of the triangle formed by the three planets.
  * @param {Position} position1 - The coordinates (`x`, `y`) of the first planet.
  * @param {Position} position2 - The coordinates (`x`, `y`) of the second planet.
  * @param {Position} position3 - The coordinates (`x`, `y`) of the third planet.
@@ -71,11 +70,11 @@ export const calculateTrianglePerimeter = (position1: Position, position2: Posit
  */
 export const isSunInsideTriangle = (position1: Position, position2: Position, position3: Position): boolean => {
     const sunPosition = { x: 0, y: 0 };
-    const triangleArea = Math.abs((position1.x * (position2.y - position3.y) + position2.x * (position3.y - position1.y) + position3.x * (position1.y - position2.y)) / 2);
-    const area1 = Math.abs((position1.x * (position2.y - sunPosition.y) + position2.x * (sunPosition.y - position1.y) + sunPosition.x * (position1.y - position2.y)) / 2);
-    const area2 = Math.abs((position2.x * (position3.y - sunPosition.y) + position3.x * (sunPosition.y - position2.y) + sunPosition.x * (position2.y - position3.y)) / 2);
-    const area3 = Math.abs((position3.x * (position1.y - sunPosition.y) + position1.x * (sunPosition.y - position3.y) + sunPosition.x * (position3.y - position1.y)) / 2);
-    return triangleArea === area1 + area2 + area3;
+    const triangleDoubledArea = getdeterminant(position1, position2, position3);
+    const doubledArea1 = getdeterminant(sunPosition, position1, position2);
+    const doubledArea2 = getdeterminant(sunPosition, position2, position3);
+    const doubledArea3 = getdeterminant(sunPosition, position3, position1);
+    return triangleDoubledArea === doubledArea1 + doubledArea2 + doubledArea3;
 }
 
 
@@ -137,17 +136,17 @@ export const getWeatherPredictionsByNumberOfYears = async (years: number): Promi
     let normalDays = 0;
     let mostRainyDay = undefined;
 
-    let minArea = 99999999999999999999999999999;
-    let maxArea = 0;
+    let minDeterminant = 999999999999999;
+    let maxDeterminant = 0;
 
     for (let day = 0; day < days; day++) {
         const prediction = await getWeatherPredictionByDay(day);
         const area = getdeterminant(getPlanetPosition(PLANETS.Ferengi.radius, PLANETS.Ferengi.angularSpeed * day), getPlanetPosition(PLANETS.Vulcano.radius, PLANETS.Vulcano.angularSpeed * day), getPlanetPosition(PLANETS.Betazoide.radius, PLANETS.Betazoide.angularSpeed * day));
-        if (area < minArea && area !== 0) {
-            minArea = area;
+        if (area < minDeterminant && area !== 0) {
+            minDeterminant = area;
         }
-        if (area > maxArea) {
-            maxArea = area;
+        if (area > maxDeterminant) {
+            maxDeterminant = area;
         }
         if (prediction.condition === 'Lluvia' && prediction.perimeter) {
             if (prediction.perimeter > maxPerimeter) {
@@ -181,7 +180,7 @@ export const getWeatherPredictionsByNumberOfYears = async (years: number): Promi
         }
         console.log(`Day ${day} already exists in DB`);
     }
-    console.log('Min Triangle Area:', minArea);
-    console.log('Max Triangle Area:', maxArea);
+    console.log('Min Determinant:', minDeterminant);
+    console.log('Max Determinant:', maxDeterminant);
     return { droughtDays, rainyDays, mostRainyDay, optimalDays };
 }
