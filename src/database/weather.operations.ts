@@ -3,7 +3,9 @@ import { WeatherConditions } from '../interfaces/weather.interface';
 import { Database } from 'sqlite';
 
 // Inserts a weather condition if it does not exist
-export const insertWeatherConditionIfNotExists = async (condition: WeatherConditions): Promise<void> => {
+export const insertWeatherConditionIfNotExists = async (
+  condition: WeatherConditions
+): Promise<void> => {
   const db: Database = await getDB();
 
   const stmt = await db.prepare(`
@@ -19,9 +21,12 @@ export const insertWeatherConditionIfNotExists = async (condition: WeatherCondit
 export const weatherConditionExists = async (day: number): Promise<boolean> => {
   const db: Database = await getDB();
 
-  const row = await db.get(`
+  const row = await db.get(
+    `
     SELECT 1 FROM weather_conditions WHERE day = ?;
-  `, day);
+  `,
+    day
+  );
 
   return !!row;
 };
@@ -30,9 +35,12 @@ export const weatherConditionExists = async (day: number): Promise<boolean> => {
 export const getWeatherConditionByDay = async (day: number): Promise<WeatherConditions | null> => {
   const db: Database = await getDB();
 
-  const row = await db.get(`
+  const row = await db.get(
+    `
     SELECT * FROM weather_conditions WHERE day = ?;
-  `, day);
+  `,
+    day
+  );
 
   return row;
 };

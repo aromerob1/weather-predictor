@@ -4,7 +4,7 @@ import { getWeatherByDay, getWeatherForNumberOfYears } from '../controllers/weat
 const router = express.Router();
 
 router.get('/', (req, res) => {
-    res.send('Weather Predictor API');
+  res.send('Weather Predictor API');
 });
 
 // Day routes

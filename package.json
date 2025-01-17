@@ -6,7 +6,9 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/index.js",
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "format": "prettier --write \"src/**/*.{js,ts,jsx,tsx}\"",
+    "format:check": "prettier --check \"src/**/*.{js,ts,jsx,tsx}\""
   },
   "keywords": [],
   "author": "Andres Romero",
@@ -14,6 +16,7 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.6",
+    "prettier": "^3.4.2",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
