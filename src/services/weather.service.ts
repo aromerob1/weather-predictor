@@ -1,6 +1,8 @@
 import { Position } from '../interfaces/position.interface';
 import { WeatherConditions, WeatherYearsPredictions } from '../interfaces/weather.interface';
 import { PLANETS } from '../config/planets';
+import { getDB } from '../database';
+import { insertWeatherConditionIfNotExists, getWeatherConditionByDay, weatherConditionExists } from '../database/weather.operations';
 
 /**
  * The function `getPlanetPosition` calculates the x and y coordinates of a planet based on its
@@ -85,7 +87,14 @@ export const isSunInsideTriangle = (position1: Position, position2: Position, po
  * prediction is being made. The `condition` property indicates the weather condition for that day,
  * which can be 'Sequía', 'Presión y temperatura óptimas', or 'Lluvia'.
  */
-export const getWeatherPredictionByDay = (day: number): WeatherConditions => {
+export const getWeatherPredictionByDay = async (day: number): Promise<WeatherConditions> => {
+    //Check if the day already exists in the database
+    const dbDay: WeatherConditions | null = await getWeatherConditionByDay(day);
+    if (dbDay) {
+        console.log(`Day ${day} already exists in DB`);
+        return { day, condition: dbDay.condition, perimeter: dbDay.perimeter };
+    }
+
     const ferengiPosition = getPlanetPosition(PLANETS.Ferengi.radius, PLANETS.Ferengi.angularSpeed * day);
     const vulcanoPosition = getPlanetPosition(PLANETS.Vulcano.radius, PLANETS.Vulcano.angularSpeed * day);
     const betazoidePosition = getPlanetPosition(PLANETS.Betazoide.radius, PLANETS.Betazoide.angularSpeed * day);
@@ -119,7 +128,7 @@ export const getWeatherPredictionByDay = (day: number): WeatherConditions => {
  * used to calculate the total number of days based on the assumption that each year has 365 days.
  * @returns An array of weather predictions for each day over the specified number of years.
  */
-export const getWeatherPredictionsByNumberOfYears = (years: number): WeatherYearsPredictions => {
+export const getWeatherPredictionsByNumberOfYears = async (years: number): Promise<WeatherYearsPredictions> => {    
     const days = years * 365;
     let maxPerimeter = 0;
     let rainyDays = 0;
@@ -132,7 +141,7 @@ export const getWeatherPredictionsByNumberOfYears = (years: number): WeatherYear
     let maxArea = 0;
 
     for (let day = 0; day < days; day++) {
-        const prediction = getWeatherPredictionByDay(day);
+        const prediction = await getWeatherPredictionByDay(day);
         const area = getdeterminant(getPlanetPosition(PLANETS.Ferengi.radius, PLANETS.Ferengi.angularSpeed * day), getPlanetPosition(PLANETS.Vulcano.radius, PLANETS.Vulcano.angularSpeed * day), getPlanetPosition(PLANETS.Betazoide.radius, PLANETS.Betazoide.angularSpeed * day));
         if (area < minArea && area !== 0) {
             minArea = area;
@@ -153,8 +162,26 @@ export const getWeatherPredictionsByNumberOfYears = (years: number): WeatherYear
         } else {
             normalDays++;
         }
+
+        if (!await weatherConditionExists(day)) {
+            console.log('Creating prediction for day:', day);
+            // Preparar el objeto para la base de datos
+            const weatherCondition: WeatherConditions = {
+                day: day,
+                condition: prediction.condition,
+                perimeter: prediction.perimeter
+            };
+
+            // Insertar en la base de datos si no existe
+            try {
+                await insertWeatherConditionIfNotExists(weatherCondition);
+            } catch (error) {
+                console.error(`Error al insertar la predicción del día ${day}:`, error);
+            }
+        }
+        console.log(`Day ${day} already exists in DB`);
     }
-    console.log('Min Area:', minArea);
-    console.log('Max Area:', maxArea);
+    console.log('Min Triangle Area:', minArea);
+    console.log('Max Triangle Area:', maxArea);
     return { droughtDays, rainyDays, mostRainyDay, optimalDays };
 }

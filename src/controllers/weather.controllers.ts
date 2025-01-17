@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { getWeatherPredictionByDay, getWeatherPredictionsByNumberOfYears } from "../services/weather.service";
 
-export const getWeatherByDay = (req: Request, res: Response): void => {
+export const getWeatherByDay = async (req: Request, res: Response): Promise<void> => {
   try {
     // Obtener el día de los parámetros de la solicitud
     const day = parseInt(req.params.day, 10);
@@ -12,7 +12,7 @@ export const getWeatherByDay = (req: Request, res: Response): void => {
     }
 
     // Llamar al servicio para obtener la predicción
-    const prediction = getWeatherPredictionByDay(day);
+    const prediction = await getWeatherPredictionByDay(day);
 
     // Responder con el resultado
     res.status(200).json(prediction);
@@ -22,7 +22,7 @@ export const getWeatherByDay = (req: Request, res: Response): void => {
   }
 };
 
-export const getWeatherForNumberOfYears = (req: Request, res: Response): void => {
+export const getWeatherForNumberOfYears = async (req: Request, res: Response): Promise<void> => {
     try {
         // Obtener el número de años de los parámetros de la solicitud
         const years = parseInt(req.params.years, 10);
@@ -33,7 +33,7 @@ export const getWeatherForNumberOfYears = (req: Request, res: Response): void =>
         }
     
         // Llamar al servicio para obtener las predicciones
-        const predictions = getWeatherPredictionsByNumberOfYears(years);
+        const predictions = await getWeatherPredictionsByNumberOfYears(years);
     
         // Responder con el resultado
         res.status(200).json(predictions);
