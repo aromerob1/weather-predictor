@@ -130,7 +130,7 @@ src/
      ```math
      x = r \cdot \cos(\theta), \quad y = r \cdot \sin(\theta)
      ```
-     Where \(\theta\) is the angular displacement in degrees.
+     Where `θ` is the angular displacement in degrees.
 
 2. **Geometric Alignment**:
    - Drought: All planets and the sun are aligned.
