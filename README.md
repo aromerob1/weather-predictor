@@ -9,12 +9,14 @@ _A TypeScript-based system that predicts weather conditions using planetary alig
 - Identifies **rainy periods**, including the day of maximum rainfall, using geometric calculations.
 - Detects **optimal weather conditions** when planets align but not with the sun.
 - Calculates **planetary positions** and uses the perimeter of the triangle formed by planets to predict rainfall.
+- **Database integration** to optimize the speed of queries, ensuring efficient weather predictions even for large datasets.
 
 ---
 
 ## Technologies Used
 - **TypeScript**: For strongly typed JavaScript development.
 - **Node.js**: Backend runtime for building scalable applications.
+- **SQLite**: Lightweight database for storing precomputed results to optimize query performance.
 - **Git**: For version control.
 - **Geometric principles**: To calculate alignments and areas.
 
@@ -42,16 +44,67 @@ Follow these steps to set up the project locally:
 ---
 
 ## Usage
-1. To predict the weather for a specific day:
-   - Use the `getWeatherPredictionByDay(day)` function.
-2. Example output:
-   ```json
-   {
-     "day": 1,
-     "condition": "Rainy",
-     "perimeter": 1500
-   }
-   ```
+
+### 1. Weather Conditions for a Specific Year
+This endpoint provides weather conditions for a given amount of years.
+
+#### Endpoint:
+```
+GET http://localhost:3000/api/weather/years/:years
+```
+
+Replace `:years` with the specific amount of years you want to query.
+
+#### Example Request:
+To get weather statistics for `10` years:
+```
+GET http://localhost:3000/api/weather/years/10
+```
+
+#### Example Response:
+```json
+{
+  "droughtDays": 41,
+  "rainyDays": 846,
+  "mostRainyDay": 72,
+  "optimalDays": 41
+}
+```
+
+---
+
+### 2. Weather Prediction for a Specific Day
+This endpoint predicts the weather for a given day.
+
+#### Endpoint:
+```
+GET http://localhost:3000/api/weather/day/:day
+```
+
+Replace `:day` with the specific day number you want to predict.
+
+#### Example Request:
+To predict the weather for day `1`:
+```
+GET http://localhost:3000/api/weather/day/1
+```
+
+#### Example Response:
+```json
+{
+  "day": 1,
+  "condition": "Sequía",
+  "perimeter": 1500
+}
+```
+
+---
+
+## Database Integration
+The system uses a SQLite database to store precomputed weather predictions and conditions. This approach ensures that queries are optimized and results are retrieved quickly, even when working with large datasets or predicting conditions for multiple years.
+
+- **Database File**: The SQLite database (`weather.db`) is automatically created during the first run.
+- **Optimization**: By storing and indexing predictions, the API avoids recalculating values on every request, significantly reducing processing time.
 
 ---
 
@@ -60,8 +113,9 @@ Follow these steps to set up the project locally:
 src/
 ├── config/           # Configuration files and constants
 ├── controllers/      # Handles API requests
+├── database/         # Database config and management
 ├── interfaces/       # TypeScript interfaces and types
-├── middlewares/      # Middleware functions (if any)
+├── middlewares/      # Middleware functions
 ├── routes/           # API routes
 ├── services/         # Business logic (weather prediction)
 ├── utils/            # Helper functions
@@ -87,5 +141,5 @@ src/
 
 ## Contact
 - **Author**: Andrés Romero
-- **Email**: [your-email@example.com](mailto:your-email@example.com)
+- **Email**: [andresfeliperom@hotmail.com](mailto:andresfeliperom@hotmail.com)
 - **GitHub**: [aromerob1](https://github.com/aromerob1)
