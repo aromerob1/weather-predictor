@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 
-import weatherRouter from './routes/weather';
+import weatherRouter from './routes/weather.routes';
 
 dotenv.config();
 
@@ -12,7 +12,7 @@ const port = process.env.PORT || 3000;
 app.use('/api/weather', weatherRouter);
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('Weather Predictor API');
 });
 
 app.listen(port, () => {
